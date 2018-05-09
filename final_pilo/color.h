@@ -1,9 +1,8 @@
-#if !defined( __COLOR__)
-#define  __COLOR__ 1
+#if !defined(__COLOR__)
+#define __COLOR__ 1
 
 ////////////////////////////////////////////////////////////////////////
 //////////////////////   MEM   ////////////////////////////////////////
-
 
 #define Undefined 'U'
 #define Black 'N'
@@ -15,12 +14,12 @@
 #define CUBE_PRESENT 0
 #define CUBE_ABSENT 1
 
-typedef struct  {
-    char Left;
-	char Right;
-	char Column;
-	char cubePresent;
-	
+typedef struct {
+  char Left;
+  char Right;
+  char Column;
+  char cubePresent;
+
 } tcolor;
 
 #endif

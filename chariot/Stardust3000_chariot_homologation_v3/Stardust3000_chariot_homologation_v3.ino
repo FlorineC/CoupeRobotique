@@ -383,6 +383,7 @@ void loop() {
     objectif =CH;
     assignationObjectif();
     mouvementDemandeNema17 = sMVCH;
+    arretEnableNEMA17now() ;
     }
     chargementNouveauCube ();
     objectif = DA;
@@ -403,6 +404,7 @@ void loop() {
     objectif =CH;
     assignationObjectif();
     mouvementDemandeNema17 = sMVCH;
+    arretEnableNEMA17now() ;
     }
     chargementNouveauCube ();
     objectif = DB;
@@ -423,6 +425,7 @@ void loop() {
     objectif =CH;
     assignationObjectif();
     mouvementDemandeNema17 = sMVCH;
+    arretEnableNEMA17now() ;
     }
     chargementNouveauCube ();
     objectif = DC;
@@ -443,6 +446,7 @@ void loop() {
     objectif =CH;
     assignationObjectif();
     mouvementDemandeNema17 = sMVCH;
+    arretEnableNEMA17now() ;
     }
     chargementNouveauCube ();
     objectif = DD;
@@ -571,16 +575,31 @@ void commandeMaintiens() { // balayage des variables insMaint et actualisation d
   }
 
 }
-
+void tapisVersArriere()
+{
+      analogWrite(N20PWM, 255);//pousse a l'arriere
+    digitalWrite(N20avant, LOW);//
+    digitalWrite(N20arriere, HIGH);//
+}
+void tapisStop()
+{
+      analogWrite(N20PWM, 255);//pousse a l'arriere
+    digitalWrite(N20avant, LOW);//
+    digitalWrite(N20arriere, HIGH);//
+}
 void chargementNouveauCube() { // Chargement d'un nouveau cube sur le tapis principal CHTP  ----------------------------------------------
   Serial.println(
       "Ordre reçu : <CHTP>");//  Chargement en cours du nouveau cube vers tapis principal 
 displaycapteur();
+tapisVersArriere();
   while (digitalRead(FinDeCourseP) == HIGH) {
     analogWrite(N20PWM, 255);
     digitalWrite(N20avant, LOW);//vers l'avant
     digitalWrite(N20arriere, HIGH);
   //  displaycapteur();
+  arretEnableNEMA17();
+  Serial.println("charge");
+ // delay(10000);
   }
   
   analogWrite(N20PWM, 255);
@@ -589,22 +608,29 @@ displaycapteur();
   instMaintP = 1;
   displaycapteur();
   Serial.println("attente cube");
+//  delay(10000);
   bool value=!((!digitalRead(FinDeCoursePavant))
         && digitalRead(FinDeCourseP));
   while(value)
         {
       
-         
+  Serial.println("Maintiens");
+         arretEnableNEMA17();
          commandeMaintiens();
-        
+  //    delay(10000);      
+    
         value=!((!digitalRead(FinDeCoursePavant))
         && digitalRead(FinDeCourseP));
-        
         
           }
           displaycapteur();
           delay(300);//wait servo
-        
+
+
+        tapisVersArriere();
+  delay(300);//wait servo
+        tapisStop();
+
   Serial.println(
       "<CHTP&>");//Chargement du nouveau cube vers tapis principal terminé , ordre retourné :
 //  Serial.println("Mise en maintien");

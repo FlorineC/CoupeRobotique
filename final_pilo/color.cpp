@@ -1,6 +1,6 @@
 // from #include "C:\Temp\robot\git\intern\robot1\arduino\codeFlorine\colorview_pilo_may08\colorview_pilo_may08.ino"
-#include "board.cpp"
 
+#include "board.h"
 ////////////////////////////////////////////////////////////////////////
 //////////////////////   MEM   ////////////////////////////////////////
 
@@ -21,7 +21,6 @@ ZTCS34725 colorColumn = ZTCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4
 
 // set to false if using a common cathode LED
 #define commonAnode true
-#define MySerialDebug ((Uart)0)
 // our RGB -> eye-recognized gamma color
 byte gammatable[256];
 
@@ -202,7 +201,7 @@ void loop(tcolor &color) {
   color.Left = getColor( colorLeft);
   color.Right = getColor( colorRight);
   color.Column = getColor( colorColumn);
-  color.present = readDigital(pinPresenceCubeColorCaptor) == LOW ? CUBE_PRESENT : CUBE_ABSENT;
+  color.cubePresent = digitalRead(pinPresenceCubeColorCaptor) == LOW ? CUBE_PRESENT : CUBE_ABSENT;
 
 }
 

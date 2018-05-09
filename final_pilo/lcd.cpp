@@ -1,9 +1,7 @@
 /** here we just say hello, and return to boot for next update.
 */
-#include "board.cpp"
-
-#include <TM1637Display.h>
-
+#include "board.h"
+#include "lcd.h"
 #define HEADERSIZE 5
 #define WRITE 0xF0
 #define READ 0xF1
@@ -87,7 +85,7 @@ void setupLCD()
 }
 
 int indexloop = 0;
-void loop()
+void loopLCD()
 {
   if (digitalRead(P_COM4.Pin.P4) == HIGH) {
     num = ((num * 11 / 3) + 1) % 5000;

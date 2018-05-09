@@ -1,4 +1,8 @@
-#include "board.cpp"
+#include "board.h"
+#include "color.h"
+#include "LCD.h"
+//#include "color.cpp"
+//#include "lcd.cpp"
 
 tcolor color;
 void setup() {

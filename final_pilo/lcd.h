@@ -1,4 +1,8 @@
 
+#include "ZTCS34725.h"
+
+#include <TM1637Display.h>
+
 #define LED_STRING_LENMAX 64
 
 const uint8_t SEG_DONE[] = {
@@ -129,3 +133,7 @@ typedef union {
   uint8_t memmap[MAXOFFSET];
 } LED4x7_t;
 LED4x7_t led;
+
+void setupLed();
+void loopLCD();
+

@@ -21,5 +21,6 @@ typedef struct {
   char cubePresent;
 
 } tcolor;
-
+void setupColor();
+void loop(tcolor &color);
 #endif

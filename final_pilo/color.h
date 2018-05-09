@@ -6,7 +6,7 @@
 
 #define Undefined 'U'
 #define Black 'N'
-#define Bleue 'B'
+#define Blue 'B'
 #define Green 'G'
 #define Yellow 'Y'
 #define Orange 'O'

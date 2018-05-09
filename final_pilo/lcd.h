@@ -4,6 +4,8 @@
 #include <TM1637Display.h>
 
 #define LED_STRING_LENMAX 64
+#define MAXOFFSET 250
+
 
 const uint8_t SEG_DONE[] = {
   SEG_B | SEG_C | SEG_D | SEG_E | SEG_G, // d
@@ -124,7 +126,7 @@ typedef union {
     uint8_t data[4]; // currently displayed in segment
     char Brightness; // contast
     signed char index; // curent index of displyed string, -1 when not used.
-    String string; // string display in rolling mode finished by /0x0
+    char string[64]; // string display in rolling mode finished by /0x0
     uint16_t number; // display a number between 0 and 9999
     uint16_t rollerover;
     unsigned long time;
@@ -132,7 +134,7 @@ typedef union {
 
   uint8_t memmap[MAXOFFSET];
 } LED4x7_t;
-LED4x7_t led;
+extern LED4x7_t led;
 
 void setupLed();
 void loopLCD();

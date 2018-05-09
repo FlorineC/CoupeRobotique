@@ -162,12 +162,15 @@ char getColor(ZTCS34725 & tcs) {
   else if (detectColor((int) r, (int) g, (int) b, rBlue, gBlue, bBlue, errorMargin))
   {
     MySerial.println("BLUE");
-    result = Bleue;
+    result = Blue;
   }
   else if (detectColor((int) r, (int) g, (int) b, rBlack, gBlack, bBlack, errorMargin))
   {
     MySerial.println("BLACK");
     result = Black;
+  } else {
+    MySerial.println("UNDEFINED");
+    result = Undefined;
   }
 
   if (MySerialDebug)

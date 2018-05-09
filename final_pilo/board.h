@@ -3,6 +3,7 @@
 #include <Wire.h>
 #include "ZTCS34725.h"
 #include "arduino.h"
+#include <variant.h>
 //red : A5, orange :GND, green : A5, blue : A4
 // Pick analog outputs, for the UNO these three work well
 // use ~560  ohm resistor between Red & Blue, ~1K for green (its brighter)
@@ -41,3 +42,17 @@
 #endif
 #define MySerialDebug MySerial
 #endif
+
+
+struct tdevice {
+  struct color{
+    
+  };
+  struct LCD{
+    
+  };
+  uint32_t boutonDemarrer;
+
+};
+extern tdevice device;
+

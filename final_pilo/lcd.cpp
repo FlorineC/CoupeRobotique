@@ -5,11 +5,10 @@
 #define HEADERSIZE 5
 #define WRITE 0xF0
 #define READ 0xF1
-#define MAXOFFSET 250
 
 #define Myserial P_COM3.serial2
-#define CLK P_COM0_BIS.Pin.PIN16
-#define DIO P_COM0_BIS.Pin.PIN18 /*marron*/
+#define CLK P_ANA0.Pin.PIN16
+#define DIO P_ANA0.Pin.PIN18 /*marron*/
 #define GND P_COM0_BIS.Pin.PIN04
 #define VCC P_COM0_BIS.Pin.PIN02
 
@@ -19,6 +18,8 @@ uint8_t WriteOK = 0xFB;
 int incomingByte = 0;
 byte buff_header[5];
 byte data[250];
+LED4x7_t led;
+
 
 TM1637Display display(CLK, DIO);
 
@@ -66,7 +67,7 @@ void setupLed()
   led.data[3] = 0xFF; // currently displayed in segment
   led.Brightness = 0xF;
   led.index = -1; // curent index of displyed string, -1 when not used.
-  led.string = ""; // string display in rolling mode finished by /0x0
+  memset(led.string, 0, 64);// string display in rolling mode finished by /0x0
   led.Brightness = 0x7; // string display in rolling mode finished by /0x0
   led.rollerover = 500;
   led.number = 0; // display a number between 0 and 9999
@@ -80,7 +81,7 @@ void setupLCD()
   pinMode(P_COM4.Pin.P4, INPUT);
   Myserial.begin(115200);
   setupLed();
-  memmap = &led.data[0];
+//  memmap = &led.data[0];
 
 }
 
@@ -102,7 +103,7 @@ void loopLCD()
     }
   }
   digitalWrite(P_COM4.Pin.P5, HIGH);
-  if (Myserial.available() >= 5) {
+  /*if (Myserial.available() >= 5) {
     Myserial.readBytes(buff_header, 5);
     int len = buff_header[4];
     if (buff_header[0] == WRITE) {
@@ -128,7 +129,7 @@ void loopLCD()
       Myserial.write(0xFF);
     }
   }
-
+*/
   displayLED(led);
 }
 

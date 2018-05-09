@@ -1,6 +1,7 @@
 #include "board.h"
 #include "color.h"
 #include "LCD.h"
+#include "demarrage.h"
 //#include "color.cpp"
 //#include "lcd.cpp"
 
@@ -19,12 +20,14 @@ void setup() {
 
 
 
-
+ tdevice device;
 
 
 void loop() {
 
   loop(color);
+  loopLCD();
+  loopDemarrer();
 
 }
 

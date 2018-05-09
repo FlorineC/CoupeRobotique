@@ -2,6 +2,7 @@
 #include "color.h"
 #include "LCD.h"
 #include "demarrage.h"
+#include "slaveDevice.h"
 //#include "color.cpp"
 //#include "lcd.cpp"
 
@@ -28,7 +29,7 @@ void loop() {
   loop(color);
   loopLCD();
   loopDemarrer();
-
+  SlaveDevice_setup();
 }
 
 

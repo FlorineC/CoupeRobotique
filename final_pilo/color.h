@@ -1,5 +1,5 @@
-#if !defined(__COLOR__)
-#define __COLOR__ 1
+#ifndef __COLOR_H
+#define __COLOR_H
 
 ////////////////////////////////////////////////////////////////////////
 //////////////////////   MEM   ////////////////////////////////////////
@@ -21,6 +21,8 @@ typedef struct {
   char cubePresent;
 
 } tcolor;
+#endif
+
 void setupColor();
 void loop(tcolor &color);
-#endif
+

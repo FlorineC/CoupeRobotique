@@ -1,3 +1,5 @@
+#ifndef __LCD_H
+#define __LCD_H
 
 #include "ZTCS34725.h"
 
@@ -134,6 +136,8 @@ typedef union {
 
   uint8_t memmap[MAXOFFSET];
 } LED4x7_t;
+#endif
+
 extern LED4x7_t led;
 
 void setupLed();

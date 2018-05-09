@@ -131,5 +131,6 @@ void loopLCD()
   }
 */
   displayLED(led);
+  device.led = led;
 }
 

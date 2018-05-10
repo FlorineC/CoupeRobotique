@@ -3,4 +3,4 @@
 #endif
 
 void SlaveDevice_setup();
-void display();
+void displayDevice();

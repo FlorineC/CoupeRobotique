@@ -15,12 +15,12 @@ typedef  union
 uint8_t mem[100];
 } collonne_t;
 
-#define MONO '1' //1 Mise en route de la colonne de montée
-#define MONF '2' //2 // Arrêt de la colonne de montée
-#define MOWT 'z' //z // wait : bas arret haut au ralenti
-#define POUS '3' //3 // Activation du poussoir de chargement du cube
-#define FINISH 128
-#define NOP 0
+#define MONO (char)'1' //1 Mise en route de la colonne de montée
+#define MONF (char)'2' //2 // Arrêt de la colonne de montée
+#define MOWT (char)'z' //z // wait : bas arret haut au ralenti
+#define POUS (char)'3' //3 // Activation du poussoir de chargement du cube
+#define FINISH (char)128
+#define NOP (char)0
 collonne_t device;//variable colone pour utiliser
 
 void finish()

@@ -314,7 +314,7 @@ void setup() {
   pinMode(initialisationChariot, INPUT_PULLUP);  // 0 chariot
   decompteArretEnableNEMA17 = -1;
   decompteMarcheN20 = 0;
-while(1);
+while(1);//NOP
 // do zero
  // PCintPort::attachInterrupt(initialisationChariot, doZeroNEMA,FALLING); // attach a PinChange Interrupt to our pin on the rising edge
     attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(initialisationChariot), doZeroNEMA, FALLING);

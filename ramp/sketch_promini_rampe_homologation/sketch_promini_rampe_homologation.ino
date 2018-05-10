@@ -55,6 +55,8 @@ int positionServo = 0;
 
 #define DeviceAddress 0x14
 #define MyWirePc Wire
+/// sck bleu
+/// sda blanc
 
 ZWireDevice slave = ZWireDevice();
 void SlaveDevice_requestEvent()

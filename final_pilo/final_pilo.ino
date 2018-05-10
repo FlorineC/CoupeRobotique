@@ -15,6 +15,8 @@ void setup() {
   MySerial.println("Color View Test!");
   setupColor();
 
+  SlaveDevice_setup();
+  
 }
 
 
@@ -29,7 +31,6 @@ void loop() {
   loop(color);
   loopLCD();
   loopDemarrer();
-  SlaveDevice_setup();
 }
 
 

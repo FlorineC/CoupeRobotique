@@ -10,6 +10,9 @@
 #include "comm.h"
 
 #include <WireUtility.h>
+#include <Wire.h>
+#include <WireUtility.h>
+#include <ZWireDevice.h>
 
 /*==================================================================================================*/
 /*==================================================================================================*/
@@ -46,6 +49,8 @@ Zmotor3 motorBoard = Zmotor3();
 
 #define MySerial (P_COM0.serial)
 #define  MyWireMotor WireB 
+#define  MyWireSlave WireA 
+
 
 #define PcomSerial MySerial
 
@@ -55,6 +60,52 @@ Zmotor3 motorBoard = Zmotor3();
 #define LED_BUILTIN LED_TOP
 
 tdevice device;
+
+
+
+
+
+
+
+
+
+
+
+
+//##################### WIRE ############################
+void   display()
+{}
+#define DeviceAddress 0x19
+#define MyWirePc MyWireSlave
+
+ZWireDevice slave = ZWireDevice();
+void SlaveDevice_requestEvent()
+{
+   MySerial.println("SlaveDevice_receiveEvent");
+  slave.requestEvent();
+  display();
+}
+void SlaveDevice_receiveEvent(int iData)
+{
+  
+ MySerial.println("SlaveDevice_receiveEvent");
+  slave.receiveEvent(iData);
+  display();
+  }
+
+void SlaveDevice_setup()
+{
+  
+//I2C slave configuration
+slave.begin(MyWireSlave,DeviceAddress,(uint8_t *)(device.mem));
+//slave.setSerialDebug(MySerial);
+MyWirePc.onReceive(SlaveDevice_receiveEvent);
+MyWirePc.onRequest(SlaveDevice_requestEvent);
+
+  MySerial.println("SlaveDevice_setup");
+}
+
+//##################### WIRE ############################
 
 void setupMotorBoard() {
 	MyWireMotor.begin();
@@ -1279,7 +1330,7 @@ void dummy() {
 	Serial1.begin(9600);
 	if (Serial1.available()) {
 		int inByte = Serial1.read();
-		Serial.write(inByte);
+		MySerial.write(inByte);
 	}
 }
 

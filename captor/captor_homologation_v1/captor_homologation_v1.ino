@@ -35,6 +35,10 @@ Zmotor3 motorBoard = Zmotor3();
 #define M2_MM  motorBoard.getPin(MOTOR3_IO_1)  /*blanc*/
 #define M2_EN  motorBoard.getPin(MOTOR3_EN_1)  /*blanc*/
 
+
+#define PIN_DEMAR  P_Encoder[1-1].Pin.IA  
+#define PIN_CAMP  P_Encoder[1-1].Pin.IB 
+
 //PA16   3 WireB  //sercom3
 //PB22 0 5 PCOM0  //sercom0
 //PC28 1 wireA   //sercom1
@@ -421,14 +425,86 @@ void gohome() {
 #define MM_TO_TICK(a) (int)(((double)a)/(135.0/130.0))
 #define MM_S_TO_PWMD(a) (int)(((double)a)*1+100)
 
-int couleur_distance=(1500);
+int couleur_distance=(1200);
 int couleur_vitesse=(150);
 
 #define US_D_ID 0
 #define US_G_ID 2
 
+#define campOrange 'O'
+#define campVert 'V'
+#define KEcartRoue  280
+
+void av2(signed int d1t,signed int d2t, signed int v1t,signed int v2t);
+void arc_de_cercle(int Rayon, int Angle)
+{
+	
+	double liDistance1;
+	double liDistance2;
+	double liDistanceD;
+	double liDistanceG;
+
+	if (Rayon <= KEcartRoue/2) {
+		while(1);
+	}
+#define M_PI 3.121592
+
+	// Calculs
+	liDistance1 = ((double)Angle /360.0) * M_PI;
+	liDistance2 = liDistance1 * KEcartRoue / 2;
+	liDistance1 = liDistance1 * (double)Rayon;
+	liDistanceD = (liDistance1 + liDistance2);
+	liDistanceG = (liDistance1 - liDistance2);
+int Vitesse0,Vitesse1;
+int KVitesseStandard=120;
+	
+	// Adapatation de la vitesse
+	if (liDistanceD > liDistanceG) {
+		Vitesse0 = KVitesseStandard;
+		Vitesse1 = (int16_t)((liDistanceD / liDistanceG) * KVitesseStandard);
+	}
+	else {
+		Vitesse0 = (int16_t)((liDistanceG / liDistanceD) * KVitesseStandard);
+		Vitesse1 = KVitesseStandard;
+	}
+
+
+
+ av2(liDistanceD,liDistanceD, Vitesse0,Vitesse1);
+}
+void timeoutArret();  
+void evitement_Arret_depart(int camp)
+{
+timeoutArret();
+ loopUS();
+ bool status=true;
+ if(camp!=campOrange)
+ status=(device.Hcsr04.value[US_D_ID]<100) ;
+ else
+ status=(device.Hcsr04.value[US_G_ID]<100);
+ 
+if (status )
+{
+  int v1=cmdD.getPoint();
+  int v2=cmdG.getPoint();
+  cmdD.stop();
+  cmdG.stop();
+ // while(1);
+  while (status )
+  {loopUS() ;
+  if(camp!=campOrange)
+ status=(device.Hcsr04.value[US_D_ID]<100) ;
+ else
+ status=(device.Hcsr04.value[US_G_ID]<100);
+ }
+  cmdD.setPoint(v1);
+  cmdG.setPoint(v2);
+}
+}
+
 void evitement_Arret()
 {
+timeoutArret();
 
  loopUS();
 if ((device.Hcsr04.value[US_D_ID]<100) ||(device.Hcsr04.value[US_G_ID]<100) )
@@ -444,9 +520,42 @@ if ((device.Hcsr04.value[US_D_ID]<100) ||(device.Hcsr04.value[US_G_ID]<100) )
   cmdG.setPoint(v2);
 }
 }
-void av(signed int couleur_distance, signed int couleur_vitesse)
+void av2(signed int d1t,signed int d2t, signed int v1t,signed int v2t)
 {
 	delay(300);
+	int d1,d2,d1_,d2_;
+	int distanceTICK=MM_TO_TICK((d1t+d2t)/2);
+	int v1=MM_S_TO_PWMD(v1t);
+int v2=MM_S_TO_PWMD(v2t);
+
+	d1=d1_ = cmdD.getEncoder()->getValue();
+	d2=d2_ = cmdG.getEncoder()->getValue();
+// no PID :
+        int time1=micros();
+
+	cmdD.setPoint(v1);
+        cmdG.setPoint( v2);
+	while(abs((d1_+d2_)-(d1+d2))<distanceTICK*2)
+	{
+        cmdD.loop();
+        cmdG.loop();
+         evitement_Arret();
+		d1_ = cmdD.getEncoder()->getValue();
+	    d2_ = cmdG.getEncoder()->getValue();
+	}
+        int time2=micros();
+    int volatile duree=time2-time1;
+	//STOP
+cmdD.stop();
+	cmdG.stop();
+      duree=time2-time1;
+    duree=duree;
+
+
+}
+void av(signed int couleur_distance, signed int couleur_vitesse)
+{
+//	delay(300);
 	int d1,d2,d1_,d2_;
 	int distanceTICK=MM_TO_TICK(couleur_distance);
 	int vitesseTICK=MM_S_TO_PWMD(couleur_vitesse);
@@ -458,7 +567,7 @@ void av(signed int couleur_distance, signed int couleur_vitesse)
 
 	cmdD.setPoint(vitesseTICK);
         cmdG.setPoint( vitesseTICK);
-	while(abs((d1_+d2_)-(d1+d2))<distanceTICK*2)
+	while(abs((d1_+d2_)-(d1+d2))<abs(distanceTICK*2))
 	{
         cmdD.loop();
         cmdG.loop();
@@ -561,41 +670,41 @@ signed int distTour=((280*3.14*degre)/360*2);
 cmdD.stop();
 cmdG.stop();
 }
-#define campOrange 'O'
-#define campVert 'V'
-#define KEcartRoue  280
-
-void arc_de_cercle(int Rayon, int Angle)
+void avtourne2(signed int degre, signed int couleur_vitesse)
 {
-	
-	double liDistance1;
-	double liDistance2;
-	double liDistanceD;
-	double liDistanceG;
+	int d1,d2,d1_,d2_;
+	int vitesseTICK=MM_S_TO_PWMD(couleur_vitesse);
+	// no PID :
+        int time1=micros();
 
-	if (Rayon <= KEcartRoue/2) {
-		while(1);
-	}
-#define M_PI 3.121592
+int vG=vitesseTICK/2+vitesseTICK;
+int vD=vitesseTICK/2;
+if (degre<0)
+{
+  vG=0;
+  vD=vitesseTICK;
+}
+signed int distTour=((280*3.14*degre)/360*2);
 
-	// Calculs
-	liDistance1 = ((double)Angle /360.0) * M_PI;
-	liDistance2 = liDistance1 * KEcartRoue / 2;
-	liDistance1 = liDistance1 * (double)Rayon;
-	liDistanceD = (liDistance1 + liDistance2);
-	liDistanceG = (liDistance1 - liDistance2);
-int Vitesse0,Vitesse1;
-int KVitesseStandard=120;
-	
-	// Adapatation de la vitesse
-	if (liDistanceD > liDistanceG) {
-		Vitesse0 = KVitesseStandard;
-		Vitesse1 = (int16_t)((liDistanceD / liDistanceG) * KVitesseStandard);
+        distTour=MM_TO_TICK(distTour);
+	d1_=d1 = cmdD.getEncoder()->getValue();
+	d2_=d2 = cmdG.getEncoder()->getValue();
+	 int dist=((d1_-d1)-(d2_-d2));
+        cmdD.setPoint(  vG);
+        cmdG.setPoint( vD);
+	while(abs(dist)<abs(distTour))
+	{
+         dist=((d1_-d1)-(d2_-d2));
+	cmdD.loop();
+        cmdG.loop();
+       
+        evitement_Arret();
+		d1_ = cmdD.getEncoder()->getValue();
+	    d2_ = cmdG.getEncoder()->getValue();
 	}
-	else {
-		Vitesse0 = (int16_t)((liDistanceG / liDistanceD) * KVitesseStandard);
-		Vitesse1 = KVitesseStandard;
-	}
+
+cmdD.stop();
+cmdG.stop();
 }
 void homologation(int camp)
 {
@@ -624,11 +733,13 @@ cmdD.setPoint(vitesseTICK+50);
 cmdD.setPoint(vitesseTICK);
         cmdG.setPoint( vitesseTICK+50);
         }       
+        
+        
 	while(abs((d1_+d2_)-(d1+d2))<distanceTICK*2)
 	{
         cmdD.loop();
         cmdG.loop();
-        
+     //   evitement_Arret_depart( camp);
 		d1_ = cmdD.getEncoder()->getValue();
 	    d2_ = cmdG.getEncoder()->getValue();
 	}
@@ -638,7 +749,7 @@ cmdD.stop();
 	cmdG.stop();
     int volatile duree=time2-time1;
     duree=duree;
-    
+     
     
     
     
@@ -656,20 +767,43 @@ int angle=90;
     if (camp==campOrange)
     angle=-90;
    // av(-couleur_distance, -couleur_vitesse);
+    ///////////////////////////////////////////////////////////////////////
+    
     delay(300);
-    avtourne(angle, couleur_vitesse);delay(300);
-	 av(800, couleur_vitesse);delay(300);
+    arc_de_cercle(500/*rayon*/, -angle);
+   
+    avtourne2(angle, couleur_vitesse);
+   
+  /*  avtourne2(5, couleur_vitesse);
+    av(30, couleur_vitesse);
+    avtourne2(5, couleur_vitesse);
+    av(30, couleur_vitesse);
+    avtourne2(10, couleur_vitesse);
+    av(50, couleur_vitesse);
+    avtourne2(25, couleur_vitesse);
+    av(50, couleur_vitesse);
+    avtourne2(45, couleur_vitesse);
+    
+    */
+  //  avtourne(angle, couleur_vitesse);delay(300);
+	
+        
+        
+        ///////////////////////////////////////////////////////////////
+        av(800, couleur_vitesse);delay(300);
+    tourne(-angle, couleur_vitesse);delay(300);
+	 av(500, couleur_vitesse);delay(300);
     tourne(-angle, couleur_vitesse);delay(300);
 	 av(800, couleur_vitesse);delay(300);
-    tourne(-angle, couleur_vitesse);delay(300);
-	 av(800, couleur_vitesse);delay(300);
+	 av(-100, -couleur_vitesse);delay(300);
+	 av(-100, -couleur_vitesse);delay(300);
+	 av(-100, -couleur_vitesse);delay(300);
     
         
 ///////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 
-while(1);
 }
 
 void homologationtest2()
@@ -952,10 +1086,93 @@ void calibratemotor() {
 //Ki=Ki/3;
 
 }
+int globaltime;
+void timeoutArret()
+{
 
+volatile int dure=micros()-globaltime;
+dure/=1000000;
+if (dure>100)
+  while(1);
+}
 void loop() {
- homologation(campVert);
- /*
+//AA 40
+//BB 31
+/*
+for(int i=0;i<100;i++)
+{
+  pinMode(i, OUTPUT);
+  digitalWrite(i, HIGH);   // turn the LED on (HIGH is the voltage level)
+}
+*/
+ delay(300);
+   
+   globaltime=micros();
+   pinMode(PIN_DEMAR, INPUT_PULLUP);
+   pinMode(PIN_CAMP, INPUT_PULLUP);
+delay(100);
+if ( digitalRead(PIN_DEMAR)==HIGH) // secteur
+{
+//choix camp
+    if (digitalRead(PIN_CAMP)==LOW)
+    {
+      pinMode(LED_TOP, OUTPUT);
+      digitalWrite(LED_TOP, HIGH);   // turn the LED on (HIGH is the voltage level)
+      pinMode(LED_BOTTOM, OUTPUT);
+      digitalWrite(LED_BOTTOM, HIGH);   // turn the LED on (HIGH is the voltage level)
+    //  delay(100);
+    }
+    else
+    {
+      pinMode(LED_TOP, OUTPUT);
+      digitalWrite(LED_TOP, LOW);   // turn the LED on (HIGH is the voltage level)
+      pinMode(LED_BOTTOM, OUTPUT);
+      digitalWrite(LED_BOTTOM, LOW);   // turn the LED on (HIGH is the voltage level)
+    //  delay(100); 
+    }
+
+}
+else //BATERRY
+{
+// attente tirette
+    while( digitalRead(PIN_DEMAR)==LOW);
+    delay(100);
+    while( digitalRead(PIN_DEMAR)==HIGH)
+    {
+//choix camp
+    if (digitalRead(PIN_CAMP)==LOW)
+    {
+      pinMode(LED_TOP, OUTPUT);
+      digitalWrite(LED_TOP, HIGH);   // turn the LED on (HIGH is the voltage level)
+      pinMode(LED_BOTTOM, OUTPUT);
+      digitalWrite(LED_BOTTOM, HIGH);   // turn the LED on (HIGH is the voltage level)
+    //  delay(100);
+    }
+    else
+    {
+      pinMode(LED_TOP, OUTPUT);
+      digitalWrite(LED_TOP, LOW);   // turn the LED on (HIGH is the voltage level)
+      pinMode(LED_BOTTOM, OUTPUT);
+      digitalWrite(LED_BOTTOM, LOW);   // turn the LED on (HIGH is the voltage level)
+    //  delay(100); 
+    }
+
+    }
+}
+
+if (digitalRead(PIN_CAMP)==LOW)
+{
+  homologation(campVert);
+}
+else
+{
+  homologation(campOrange);
+
+}
+volatile int dure=micros()-globaltime;
+dure=dure/1000000;
+while(1);
+/*
 	calibratemotor();*/
 
 //MySerial.println("loop");

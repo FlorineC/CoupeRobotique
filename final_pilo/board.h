@@ -43,7 +43,6 @@
 
 #endif
 #define MySerialDebug MySerial
-#endif
 
 typedef union {
   struct {
@@ -53,5 +52,7 @@ typedef union {
   };
 uint8_t mem[100];
 } tdevice;
+
 extern tdevice device;
+#endif
 

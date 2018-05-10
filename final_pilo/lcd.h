@@ -136,9 +136,9 @@ typedef union {
 
   uint8_t memmap[MAXOFFSET];
 } LED4x7_t;
-#endif
 
 extern LED4x7_t led;
+#endif
 
 void setupLed();
 void loopLCD();

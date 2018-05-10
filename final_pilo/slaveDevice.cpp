@@ -1,7 +1,6 @@
-#include "board.h"
-#include <Wire.h>
 #include <ZWireDevice.h>
 #include <WireUtility.h>
+#include "board.h"
 
 
 #define DeviceAddress 0x15

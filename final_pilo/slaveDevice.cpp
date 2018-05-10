@@ -3,9 +3,6 @@
 #include "board.h"
 
 
-#define DeviceAddress 0x15
-#define MyWirePc P_COM2.wire
-
 ZWireDevice slave = ZWireDevice();
 
 void display()
@@ -31,11 +28,12 @@ void SlaveDevice_setup()
 {
   
 //I2C slave configuration
-slave.begin(MyWirePc,DeviceAddress,(uint8_t *)(device.mem));
-//slave.setSerialDebug(MySerial);
-MyWirePc.onReceive(SlaveDevice_receiveEvent);
-MyWirePc.onRequest(SlaveDevice_requestEvent);
+slave.begin(MyWireSlave,DeviceAddress,(uint8_t *)(device.mem));
+//slave.setSerialDebug(MyWireSlave);
+MyWireSlave.onReceive(SlaveDevice_receiveEvent);
+MyWireSlave.onRequest(SlaveDevice_requestEvent);
 
   Serial.println("SlaveDevice_setup");
 }
+
 

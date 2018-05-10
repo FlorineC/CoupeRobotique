@@ -32,8 +32,10 @@
 #define bluepin -1
 
 #define MySerial P_COM3.serial2 //usb
-#define Mywire P_COM0_BIS.wire // Pcomx.pin6 SDA //Pcomx.pin5 SCL
 #define MyPin P_COM3.Pin.PIN09 //usb
+
+#define DeviceAddress 0x1A
+#define MyWireSlave P_COM4.wire
 
 
 #elif defined(BOARD_ID_Captor)

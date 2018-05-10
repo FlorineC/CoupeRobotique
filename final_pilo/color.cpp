@@ -205,7 +205,7 @@ void loop(tcolor &color) {
   color.Right = getColor( colorRight);
   color.Column = getColor( colorColumn);
   color.cubePresent = digitalRead(pinPresenceCubeColorCaptor) == LOW ? CUBE_PRESENT : CUBE_ABSENT;
-
+  device.color = color;
 }
 
 
